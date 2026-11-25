@@ -106,3 +106,12 @@ test("clears both duplicate warnings after correcting one SKU", () => {
     "Revise o preço",
   ])
 })
+
+import { sampleCSV } from "#src/sample.ts"
+
+test("finds three affected products in the demo", () => {
+  const source = parseCSV(sampleCSV, "demo.csv")
+  const catalog = mapCatalog(source, suggest(source.headers))
+  equal(catalog.items.length, 6)
+  equal(issuesFor(catalog.items).filter((list) => list.length).length, 3)
+})
