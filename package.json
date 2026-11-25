@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "biome check .",
-    "format": "biome check --write ."
+    "format": "biome check --write .",
+    "hooks:install": "sh scripts/install-hooks.sh"
   },
   "keywords": [],
   "author": "",
