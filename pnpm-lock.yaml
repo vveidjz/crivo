@@ -191,6 +191,9 @@ importers:
       '@commitlint/cli':
         specifier: 21.2.4
         version: 21.2.4(conventional-commits-parser@7.1.4)
+      '@commitlint/config-conventional':
+        specifier: 21.2.4
+        version: 21.2.4
 
 packages:
 
