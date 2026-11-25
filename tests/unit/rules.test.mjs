@@ -1,4 +1,4 @@
-import { deepEqual, equal } from "node:assert/strict"
+import { deepEqual, equal, throws } from "node:assert/strict"
 import { test } from "node:test"
 import { parseCSV } from "#src/catalog.ts"
 
@@ -19,4 +19,9 @@ test("reads quoted fields without converting identifiers", () => {
     parseCSV('sku;nome;preco\n0008;"Tinta; azul";18', "tintas.csv").rows,
     [["0008", "Tinta; azul", "18"]],
   )
+})
+
+test("rejects repeated and insufficient headers", () => {
+  throws(() => parseCSV("SKU;nome;NOME\n1;x;y", "a.csv"), /único/)
+  throws(() => parseCSV("sku;nome\n1;x", "a.csv"), /três colunas/)
 })
