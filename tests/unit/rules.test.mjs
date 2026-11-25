@@ -1,6 +1,12 @@
-import { deepEqual, equal, rejects, throws } from "node:assert/strict"
+import { deepEqual, equal, match, rejects, throws } from "node:assert/strict"
 import { test } from "node:test"
-import { needsMapping, parseCSV, readFile, suggest } from "#src/catalog.ts"
+import {
+  mappingError,
+  needsMapping,
+  parseCSV,
+  readFile,
+  suggest,
+} from "#src/catalog.ts"
 
 test("reads CSV headers and keeps leading zeros in SKU", () => {
   const source = parseCSV("sku,nome,preco\n0007,Papel,12", "papel.csv")
@@ -55,4 +61,12 @@ test("suggests supplier columns by normalized header", () => {
     color: -1,
   })
   equal(needsMapping(source), true)
+})
+
+test("requires distinct source columns", () => {
+  const headers = ["sku", "nome", "preco"]
+  const columns = suggest(headers)
+  equal(mappingError(headers, columns), "")
+  match(mappingError(headers, { ...columns, sku: -1 }), /SKU/)
+  match(mappingError(headers, { ...columns, price: 0 }), /apenas um campo/)
 })

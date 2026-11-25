@@ -105,3 +105,17 @@ export function needsMapping(source: Source) {
     )
   )
 }
+
+export function mappingError(headers: string[], columns: Columns): string {
+  const selected = new Set<number>()
+  for (const field of fields) {
+    const index = columns[field]
+    if (index === -1 && (field === "color" || field === "category")) continue
+    if (!Number.isInteger(index) || index < 0 || index >= headers.length)
+      return "Escolha uma coluna para " + labels[field] + "."
+    if (selected.has(index))
+      return "Use a coluna “" + headers[index] + "” em apenas um campo."
+    selected.add(index)
+  }
+  return ""
+}
