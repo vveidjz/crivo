@@ -24,7 +24,25 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "recommended"
+      "preset": "recommended",
+      "performance": {
+        "noNamespaceImport": "error"
+      },
+      "style": {
+        "noDefaultExport": "error",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "patterns": [
+              {
+                "group": ["**"],
+                "importNamePattern": "default",
+                "message": "Use named imports."
+              }
+            ]
+          }
+        }
+      }
     }
   },
   "javascript": {
