@@ -1,6 +1,6 @@
 import { deepEqual, equal, rejects, throws } from "node:assert/strict"
 import { test } from "node:test"
-import { parseCSV, readFile } from "#src/catalog.ts"
+import { needsMapping, parseCSV, readFile, suggest } from "#src/catalog.ts"
 
 test("reads CSV headers and keeps leading zeros in SKU", () => {
   const source = parseCSV("sku,nome,preco\n0007,Papel,12", "papel.csv")
@@ -43,4 +43,16 @@ test("checks file type, byte limit and encoding", async () => {
   await rejects(readFile(new File([new Uint8Array([255])], "a.csv")), /UTF-8/)
   const batch = await readFile(new File(["sku;nome;preco\n007;x;1"], "a.csv"))
   equal(batch.rows[0][0], "007")
+})
+
+test("suggests supplier columns by normalized header", () => {
+  const source = parseCSV("Valor;Referência;Descrição\n10;0001;Tinta", "a.csv")
+  deepEqual(suggest(source.headers), {
+    sku: 1,
+    name: 2,
+    price: 0,
+    category: -1,
+    color: -1,
+  })
+  equal(needsMapping(source), true)
 })

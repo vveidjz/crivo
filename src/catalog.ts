@@ -1,5 +1,27 @@
 import { parse } from "csv-parse/browser/esm/sync"
 
+const fields = ["sku", "name", "price", "category", "color"] as const
+type Field = (typeof fields)[number]
+type Columns = Record<Field, number>
+type Source = {
+  fileName: string
+  headers: string[]
+  rows: string[][]
+}
+
+const labels: Record<Field, string> = {
+  sku: "SKU",
+  name: "Nome",
+  price: "Preço",
+  category: "Categoria",
+  color: "Cor",
+}
+const required = ["sku", "name", "price"] as const
+const aliases: Partial<Record<Field, string>> = {
+  sku: "referencia",
+  name: "descricao",
+  price: "valor",
+}
 const normalize = (value: string) =>
   value
     .trim()
@@ -7,7 +29,7 @@ const normalize = (value: string) =>
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
 
-export function parseCSV(text: string, fileName: string) {
+export function parseCSV(text: string, fileName: string): Source {
   const firstLine = text
     .trimStart()
     .split(/[\r\n]/, 1)[0]
@@ -55,4 +77,31 @@ export async function readFile(file: File) {
     throw Error("Salve o CSV em UTF-8 antes de abrir.")
   }
   return parseCSV(text, file.name)
+}
+
+export function suggest(headers: string[]): Columns {
+  const names = headers.map(normalize)
+  const columns: Columns = {
+    sku: -1,
+    name: -1,
+    price: -1,
+    category: -1,
+    color: -1,
+  }
+  for (const field of fields) {
+    const exact = names.indexOf(normalize(labels[field]))
+    columns[field] =
+      exact >= 0 ? exact : names.findIndex((name) => name === aliases[field])
+  }
+  return columns
+}
+
+export function needsMapping(source: Source) {
+  const names = source.headers.map(normalize)
+  return (
+    !required.every((field) => names.includes(normalize(labels[field]))) ||
+    names.some(
+      (name) => !fields.some((field) => normalize(labels[field]) === name),
+    )
+  )
 }
