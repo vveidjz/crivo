@@ -5,8 +5,10 @@ import {
   mappingError,
   needsMapping,
   parseCSV,
+  price,
   readFile,
   suggest,
+  validPrice,
 } from "#src/catalog.ts"
 
 test("reads CSV headers and keeps leading zeros in SKU", () => {
@@ -81,4 +83,11 @@ test("maps a reordered source into a catalog", () => {
   equal(product.sku, "007")
   equal(product.price, "12,50")
   equal(product.name, "Cobre")
+})
+
+test("accepts positive prices with up to two decimal places", () => {
+  for (const value of ["12", "12.50", "12,50"]) equal(validPrice(value), true)
+  for (const value of ["0", "-1", "1,999", "a combinar"])
+    equal(validPrice(value), false)
+  match(price("12,50"), /12,50/)
 })
