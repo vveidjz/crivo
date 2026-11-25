@@ -18,7 +18,8 @@
     "target": "es2022",
     "types": ["vite/client"],
     "verbatimModuleSyntax": true,
-    "preserveConstEnums": true
+    "preserveConstEnums": true,
+    "allowImportingTsExtensions": true
   },
   "include": ["src"]
 }

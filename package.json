@@ -39,5 +39,8 @@
     "csv-parse": "7.0.3",
     "react": "19.3.1",
     "react-dom": "19.3.1"
+  },
+  "imports": {
+    "#src/*": "./src/*"
   }
 }
