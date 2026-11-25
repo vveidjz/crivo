@@ -25,3 +25,11 @@ test("rejects repeated and insufficient headers", () => {
   throws(() => parseCSV("SKU;nome;NOME\n1;x;y", "a.csv"), /único/)
   throws(() => parseCSV("sku;nome\n1;x", "a.csv"), /três colunas/)
 })
+
+test("rejects wrong row width and oversized batches", () => {
+  throws(() => parseCSV("sku;nome;preco\n1;x", "a.csv"), /registro 1/)
+  throws(
+    () => parseCSV("sku;nome;preco\n" + "1;x;2\n".repeat(201), "a.csv"),
+    /200/,
+  )
+})

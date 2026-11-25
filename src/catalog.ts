@@ -32,5 +32,14 @@ export function parseCSV(text: string, fileName: string) {
     throw Error("Inclua pelo menos três colunas para SKU, nome e preço.")
   if (names.includes("") || new Set(names).size !== names.length)
     throw Error("Cada coluna precisa de um nome único.")
+  if (!rows.length || rows.length > 200)
+    throw Error("Escolha um lote de 1 a 200 produtos.")
+  const invalid = rows.findIndex((row) => row.length !== headers.length)
+  if (invalid >= 0)
+    throw Error(
+      "O registro " +
+        (invalid + 1) +
+        " tem uma quantidade de campos diferente do cabeçalho.",
+    )
   return { headers, rows, fileName }
 }
