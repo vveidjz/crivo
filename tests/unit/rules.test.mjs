@@ -1,6 +1,7 @@
 import { deepEqual, equal, match, rejects, throws } from "node:assert/strict"
 import { test } from "node:test"
 import {
+  issuesFor,
   mapCatalog,
   mappingError,
   needsMapping,
@@ -90,4 +91,18 @@ test("accepts positive prices with up to two decimal places", () => {
   for (const value of ["0", "-1", "1,999", "a combinar"])
     equal(validPrice(value), false)
   match(price("12,50"), /12,50/)
+})
+
+test("clears both duplicate warnings after correcting one SKU", () => {
+  const items = [
+    { sku: "a", name: "Areia", price: "10" },
+    { sku: "A", name: "Marfim", price: "10" },
+  ]
+  deepEqual(issuesFor(items), [["SKU repetido"], ["SKU repetido"]])
+  deepEqual(issuesFor([items[0], { ...items[1], sku: "b" }]), [[], []])
+  deepEqual(issuesFor([{ sku: "", name: " ", price: "0" }])[0], [
+    "Informe o nome",
+    "Informe o SKU",
+    "Revise o preço",
+  ])
 })

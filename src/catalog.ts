@@ -150,3 +150,20 @@ export function price(value: string) {
     ? currency.format(Number(value.replace(",", ".")))
     : value || "Sem preço"
 }
+
+export function issuesFor(items: Product[]) {
+  const counts = new Map<string, number>()
+  for (const item of items) {
+    const key = item.sku.trim().toUpperCase()
+    counts.set(key, (counts.get(key) ?? 0) + 1)
+  }
+  return items.map((item) => {
+    const issues: string[] = []
+    if (!item.name.trim()) issues.push("Informe o nome")
+    if (!item.sku.trim()) issues.push("Informe o SKU")
+    else if ((counts.get(item.sku.trim().toUpperCase()) ?? 0) > 1)
+      issues.push("SKU repetido")
+    if (!validPrice(item.price)) issues.push("Revise o preço")
+    return issues
+  })
+}
