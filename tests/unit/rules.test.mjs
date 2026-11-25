@@ -1,6 +1,7 @@
 import { deepEqual, equal, match, rejects, throws } from "node:assert/strict"
 import { test } from "node:test"
 import {
+  mapCatalog,
   mappingError,
   needsMapping,
   parseCSV,
@@ -69,4 +70,15 @@ test("requires distinct source columns", () => {
   equal(mappingError(headers, columns), "")
   match(mappingError(headers, { ...columns, sku: -1 }), /SKU/)
   match(mappingError(headers, { ...columns, price: 0 }), /apenas um campo/)
+})
+
+test("maps a reordered source into a catalog", () => {
+  const source = parseCSV(
+    "Valor;Referência;Descrição\n12,50;007;Cobre",
+    "a.csv",
+  )
+  const [product] = mapCatalog(source, suggest(source.headers)).items
+  equal(product.sku, "007")
+  equal(product.price, "12,50")
+  equal(product.name, "Cobre")
 })

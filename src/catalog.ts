@@ -2,6 +2,9 @@ import { parse } from "csv-parse/browser/esm/sync"
 
 const fields = ["sku", "name", "price", "category", "color"] as const
 type Field = (typeof fields)[number]
+type Product = Record<"sku" | "name" | "price", string> &
+  Partial<Record<"category" | "color", string>>
+type Catalog = { fileName: string; items: Product[] }
 type Columns = Record<Field, number>
 type Source = {
   fileName: string
@@ -118,4 +121,17 @@ export function mappingError(headers: string[], columns: Columns): string {
     selected.add(index)
   }
   return ""
+}
+
+export function mapCatalog(source: Source, columns: Columns): Catalog {
+  const problem = mappingError(source.headers, columns)
+  if (problem) throw Error(problem)
+  const items = source.rows.map((row) => ({
+    sku: row[columns.sku],
+    name: row[columns.name],
+    price: row[columns.price],
+    category: row[columns.category],
+    color: row[columns.color],
+  }))
+  return { fileName: source.fileName, items }
 }
