@@ -1,10 +1,15 @@
 import { parse } from "csv-parse/browser/esm/sync"
 
 export function parseCSV(text: string, fileName: string) {
+  const firstLine = text
+    .trimStart()
+    .split(/[\r\n]/, 1)[0]
+    .replace(/"(?:[^"]|"")*"/g, "")
+  const separator = firstLine.includes(";") ? ";" : ","
   let records: string[][]
   try {
     records = parse(text, {
-      delimiter: ",",
+      delimiter: separator,
       skip_empty_lines: true,
       relax_column_count: true,
       bom: true,
@@ -13,5 +18,7 @@ export function parseCSV(text: string, fileName: string) {
     throw Error("Confira as aspas e os separadores do CSV.")
   }
   const [headers = [], ...rows] = records
-  return { fileName, headers, rows }
+    .map((row) => row.map((value) => value.trim()))
+    .filter((row) => row.length > 1 || row[0] !== "")
+  return { headers, rows, fileName }
 }
