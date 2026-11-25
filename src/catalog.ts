@@ -43,3 +43,16 @@ export function parseCSV(text: string, fileName: string) {
     )
   return { headers, rows, fileName }
 }
+
+export async function readFile(file: File) {
+  if (!file.name.toLowerCase().endsWith(".csv") || file.size > 256 * 1024)
+    throw Error("Escolha um arquivo .csv de até 256 KiB.")
+  const bytes = await file.arrayBuffer()
+  let text: string
+  try {
+    text = new TextDecoder("utf-8", { fatal: true }).decode(bytes)
+  } catch {
+    throw Error("Salve o CSV em UTF-8 antes de abrir.")
+  }
+  return parseCSV(text, file.name)
+}

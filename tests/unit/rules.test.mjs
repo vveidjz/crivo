@@ -1,6 +1,6 @@
-import { deepEqual, equal, throws } from "node:assert/strict"
+import { deepEqual, equal, rejects, throws } from "node:assert/strict"
 import { test } from "node:test"
-import { parseCSV } from "#src/catalog.ts"
+import { parseCSV, readFile } from "#src/catalog.ts"
 
 test("reads CSV headers and keeps leading zeros in SKU", () => {
   const source = parseCSV("sku,nome,preco\n0007,Papel,12", "papel.csv")
@@ -32,4 +32,15 @@ test("rejects wrong row width and oversized batches", () => {
     () => parseCSV("sku;nome;preco\n" + "1;x;2\n".repeat(201), "a.csv"),
     /200/,
   )
+})
+
+test("checks file type, byte limit and encoding", async () => {
+  await rejects(readFile(new File(["x"], "a.txt")), /256 KiB/)
+  await rejects(
+    readFile(new File([new Uint8Array(262145)], "a.csv")),
+    /256 KiB/,
+  )
+  await rejects(readFile(new File([new Uint8Array([255])], "a.csv")), /UTF-8/)
+  const batch = await readFile(new File(["sku;nome;preco\n007;x;1"], "a.csv"))
+  equal(batch.rows[0][0], "007")
 })
