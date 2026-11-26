@@ -1,17 +1,29 @@
-import { useState } from "react"
-import { issuesFor, mapCatalog, suggest } from "#src/catalog.ts"
+import { useRef, useState } from "react"
+import { issuesFor, mapCatalog, type Product, suggest } from "#src/catalog.ts"
 import { EditDialog } from "#src/EditDialog.tsx"
 import { demo } from "#src/examples.ts"
 import { Preview, Review } from "#src/Products.tsx"
 
-const catalog = mapCatalog(demo, suggest(demo.headers))
-
 export function App() {
+  const [catalog, setCatalog] = useState(() =>
+    mapCatalog(demo, suggest(demo.headers)),
+  )
   const [editing, setEditing] = useState<number | null>(null)
   const [reviewing, setReviewing] = useState(true)
   const [onlyIssues, setOnlyIssues] = useState(false)
+  const filterInput = useRef<HTMLInputElement>(null)
   const issues = issuesFor(catalog.items)
   const pending = issues.filter((list) => list.length).length
+  function saveCorrection(item: Product) {
+    const updated = catalog.items.map((previous, index) =>
+      index === editing ? item : previous,
+    )
+    const rowDisappears =
+      editing !== null && onlyIssues && !issuesFor(updated)[editing].length
+    setCatalog({ ...catalog, items: updated })
+    setEditing(null)
+    if (rowDisappears) requestAnimationFrame(() => filterInput.current?.focus())
+  }
   return (
     <section className="workspace content">
       <nav aria-label="Visualizações">
@@ -38,6 +50,7 @@ export function App() {
         <>
           <label className="filter">
             <input
+              ref={filterInput}
               type="checkbox"
               checked={onlyIssues}
               onChange={(event) => setOnlyIssues(event.target.checked)}
@@ -58,6 +71,7 @@ export function App() {
         <EditDialog
           item={catalog.items[editing]}
           issues={issues[editing]}
+          onSave={saveCorrection}
           onDismiss={() => setEditing(null)}
         />
       )}
