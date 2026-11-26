@@ -13,7 +13,15 @@ function Swatch({ item, className }: { item: Product; className: string }) {
   )
 }
 
-export function Review({ items, issues }: Props) {
+export function Review({
+  items,
+  issues,
+  onlyIssues,
+}: Props & {
+  onlyIssues: boolean
+}) {
+  if (onlyIssues && issues.every((list) => !list.length))
+    return <p className="empty">Nenhuma pendência neste lote.</p>
   return (
     <table className="listing" aria-label="Produtos do arquivo">
       <thead>
@@ -28,6 +36,7 @@ export function Review({ items, issues }: Props) {
       <tbody>
         {items.map((item, index) => {
           const problems = issues[index]
+          if (onlyIssues && !problems.length) return null
           return (
             // biome-ignore lint/suspicious/noArrayIndexKey: Each row keeps its original CSV position throughout review.
             <tr key={index}>
