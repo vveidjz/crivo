@@ -1,5 +1,14 @@
 import { useRef, useState } from "react"
-import { issuesFor, mapCatalog, type Product, suggest } from "#src/catalog.ts"
+import {
+  type Columns,
+  issuesFor,
+  mapCatalog,
+  needsMapping,
+  type Product,
+  readFile,
+  type Source,
+  suggest,
+} from "#src/catalog.ts"
 import { EditDialog } from "#src/EditDialog.tsx"
 import { demo } from "#src/examples.ts"
 import { Preview, Review } from "#src/Products.tsx"
@@ -12,8 +21,36 @@ export function App() {
   const [reviewing, setReviewing] = useState(true)
   const [onlyIssues, setOnlyIssues] = useState(false)
   const filterInput = useRef<HTMLInputElement>(null)
+  const [error, setError] = useState("")
+  const request = useRef(0)
+  const fileInput = useRef<HTMLInputElement>(null)
   const issues = issuesFor(catalog.items)
   const pending = issues.filter((list) => list.length).length
+  function startReview(next: Source, columns: Columns) {
+    setCatalog(mapCatalog(next, columns))
+    setOnlyIssues(false)
+    setReviewing(true)
+    setEditing(null)
+    setError("")
+  }
+
+  async function openFile(file: File) {
+    const id = ++request.current
+    try {
+      const next = await readFile(file)
+      if (id !== request.current) return
+      if (needsMapping(next)) setError("Use os cabeçalhos sku, nome e preco.")
+      else startReview(next, suggest(next.headers))
+    } catch (reason) {
+      if (id === request.current)
+        setError(
+          reason instanceof Error
+            ? reason.message
+            : "Não foi possível abrir o arquivo.",
+        )
+    }
+  }
+
   function saveCorrection(item: Product) {
     const updated = catalog.items.map((previous, index) =>
       index === editing ? item : previous,
@@ -26,6 +63,35 @@ export function App() {
   }
   return (
     <section className="workspace content">
+      {error && (
+        <p className="notice" role="alert">
+          {error}
+        </p>
+      )}
+      <div className="filebar">
+        <b className="filename">{catalog.fileName}</b>
+        <div className="actions">
+          <button
+            type="button"
+            className="btn"
+            onClick={() => fileInput.current?.click()}
+          >
+            Abrir CSV
+          </button>
+          <input
+            hidden
+            aria-label="Arquivo CSV"
+            type="file"
+            accept=".csv,text/csv"
+            ref={fileInput}
+            onChange={(event) => {
+              const file = event.target.files?.[0]
+              event.target.value = ""
+              if (file) void openFile(file)
+            }}
+          />
+        </div>
+      </div>
       <nav aria-label="Visualizações">
         <button
           type="button"
@@ -61,7 +127,10 @@ export function App() {
             items={catalog.items}
             issues={issues}
             onlyIssues={onlyIssues}
-            onEdit={setEditing}
+            onEdit={(index) => {
+              request.current++
+              setEditing(index)
+            }}
           />
         </>
       ) : (

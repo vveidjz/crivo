@@ -5,8 +5,8 @@ type Field = (typeof fields)[number]
 export type Product = Record<"sku" | "name" | "price", string> &
   Partial<Record<"category" | "color", string>>
 type Catalog = { fileName: string; items: Product[] }
-type Columns = Record<Field, number>
-type Source = {
+export type Columns = Record<Field, number>
+export type Source = {
   fileName: string
   headers: string[]
   rows: string[][]
