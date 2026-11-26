@@ -21,12 +21,21 @@ export function App() {
   const [reviewing, setReviewing] = useState(true)
   const [onlyIssues, setOnlyIssues] = useState(false)
   const filterInput = useRef<HTMLInputElement>(null)
+  const [dirty, setDirty] = useState(false)
   const [error, setError] = useState("")
   const request = useRef(0)
   const fileInput = useRef<HTMLInputElement>(null)
   const issues = issuesFor(catalog.items)
   const pending = issues.filter((list) => list.length).length
   function startReview(next: Source, columns: Columns) {
+    if (
+      dirty &&
+      !window.confirm(
+        "Substituir o lote em revisão e suas alterações pelo novo arquivo?",
+      )
+    )
+      return
+    setDirty(false)
     setCatalog(mapCatalog(next, columns))
     setOnlyIssues(false)
     setReviewing(true)
@@ -58,6 +67,7 @@ export function App() {
     const rowDisappears =
       editing !== null && onlyIssues && !issuesFor(updated)[editing].length
     setCatalog({ ...catalog, items: updated })
+    setDirty(true)
     setEditing(null)
     if (rowDisappears) requestAnimationFrame(() => filterInput.current?.focus())
   }
