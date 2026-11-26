@@ -1,9 +1,9 @@
-import assert from "node:assert/strict"
+import { deepEqual } from "node:assert/strict"
 import { readdirSync } from "node:fs"
-import test from "node:test"
+import { test } from "node:test"
 
 test("keeps test files and snapshots outside src", () => {
-  const entries = readdirSync(new URL("../../src/", import.meta.url), {
+  const entries = readdirSync("src", {
     recursive: true,
   })
   const misplaced = entries.filter(
@@ -12,5 +12,5 @@ test("keeps test files and snapshots outside src", () => {
         name,
       ) || /\.(?:test|spec)\.(?:[cm]?[jt]sx?)$/.test(name),
   )
-  assert.deepEqual(misplaced, [])
+  deepEqual(misplaced, [])
 })

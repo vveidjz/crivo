@@ -14,11 +14,14 @@
     "noUncheckedSideEffectImports": true,
     "skipLibCheck": true,
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "sourceMap": true,
     "target": "es2022",
     "types": ["vite/client"],
     "verbatimModuleSyntax": true,
-    "preserveConstEnums": true
+    "preserveConstEnums": true,
+    "allowImportingTsExtensions": true
   },
   "include": ["src"]
 }
