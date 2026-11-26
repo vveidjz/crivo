@@ -65,3 +65,25 @@ export function Review({
     </table>
   )
 }
+
+export function Preview({ items, issues }: Props) {
+  return (
+    <div className="cards">
+      {items.map((item, index) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: Preview preserves the immutable source record order.
+        <article key={index} className="card">
+          <Swatch item={item} className="sample" />
+          <div>
+            <small className="sku">{item.sku || "Sem SKU"}</small>
+            <h3>{item.name || "Sem nome"}</h3>
+            <small className="muted">{item.category || "Produto"}</small>
+            <p className="gridprice">{price(item.price)}</p>
+            {!!issues[index].length && (
+              <small className="issue">{issues[index].join(" · ")}</small>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  )
+}
