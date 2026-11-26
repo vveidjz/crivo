@@ -1,11 +1,13 @@
 import { useState } from "react"
 import { issuesFor, mapCatalog, suggest } from "#src/catalog.ts"
+import { EditDialog } from "#src/EditDialog.tsx"
 import { demo } from "#src/examples.ts"
 import { Preview, Review } from "#src/Products.tsx"
 
 const catalog = mapCatalog(demo, suggest(demo.headers))
 
 export function App() {
+  const [editing, setEditing] = useState<number | null>(null)
   const [reviewing, setReviewing] = useState(true)
   const [onlyIssues, setOnlyIssues] = useState(false)
   const issues = issuesFor(catalog.items)
@@ -46,10 +48,18 @@ export function App() {
             items={catalog.items}
             issues={issues}
             onlyIssues={onlyIssues}
+            onEdit={setEditing}
           />
         </>
       ) : (
         <Preview items={catalog.items} issues={issues} />
+      )}
+      {editing !== null && (
+        <EditDialog
+          item={catalog.items[editing]}
+          issues={issues[editing]}
+          onDismiss={() => setEditing(null)}
+        />
       )}
     </section>
   )

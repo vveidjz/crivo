@@ -17,8 +17,10 @@ export function Review({
   items,
   issues,
   onlyIssues,
+  onEdit,
 }: Props & {
   onlyIssues: boolean
+  onEdit: (index: number) => void
 }) {
   if (onlyIssues && issues.every((list) => !list.length))
     return <p className="empty">Nenhuma pendência neste lote.</p>
@@ -26,7 +28,7 @@ export function Review({
     <table className="listing" aria-label="Produtos do arquivo">
       <thead>
         <tr>
-          {["Produto", "SKU", "Preço", "Situação"].map((label) => (
+          {["Produto", "SKU", "Preço", "Situação", "Ação"].map((label) => (
             <th key={label} scope="col">
               {label}
             </th>
@@ -57,6 +59,22 @@ export function Review({
                 <span className={"badge " + (problems.length ? "bad" : "good")}>
                   {problems.join(" · ") || "Pronto"}
                 </span>
+              </td>
+
+              <td>
+                <button
+                  type="button"
+                  className="link"
+                  aria-label={
+                    "Editar " +
+                    (item.name || "produto") +
+                    ", registro " +
+                    (index + 1)
+                  }
+                  onClick={() => onEdit(index)}
+                >
+                  Editar
+                </button>
               </td>
             </tr>
           )

@@ -12,7 +12,7 @@ type Source = {
   rows: string[][]
 }
 
-const labels: Record<Field, string> = {
+export const labels: Record<Field, string> = {
   sku: "SKU",
   name: "Nome",
   price: "Preço",
