@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "playwright test",
     "lint": "biome check .",
     "format": "biome check --write .",
     "hooks:install": "sh scripts/install-hooks.sh",
     "dev": "vite",
     "build": "tsc --noEmit && vite build --base=./",
-    "test:unit": "node --test \"tests/unit/*.test.mjs\""
+    "test:unit": "node --test \"tests/unit/*.test.mjs\"",
+    "preview": "vite preview"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +30,7 @@
     "@biomejs/biome": "2.6.8",
     "@commitlint/cli": "21.2.4",
     "@commitlint/config-conventional": "21.2.4",
+    "@playwright/test": "1.65.1",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "lint-staged": "17.6.2",
