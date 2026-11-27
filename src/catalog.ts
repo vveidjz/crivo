@@ -1,6 +1,5 @@
 import { parse } from "csv-parse/browser/esm/sync"
-
-const fields = ["sku", "name", "price", "category", "color"] as const
+export const fields = ["sku", "name", "price", "category", "color"] as const
 type Field = (typeof fields)[number]
 export type Product = Record<"sku" | "name" | "price", string> &
   Partial<Record<"category" | "color", string>>

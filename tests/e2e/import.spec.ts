@@ -24,3 +24,22 @@ test("keeps a corrected draft when a replacement is declined", async ({
   await expect(page.locator("tbody")).toContainText("T-005")
   await expect(page.locator("tbody tr")).toHaveCount(6)
 })
+
+test("maps supplier columns using the first product as a sample", async ({
+  page,
+}) => {
+  await page.goto("/")
+  await page
+    .getByLabel("Arquivo CSV")
+    .setInputFiles("tests/fixtures/supplier.csv")
+  const form = page.getByRole("dialog", { name: "Mapear colunas" })
+  await expect(form.getByLabel("SKU")).toHaveValue("1")
+  await form.getByLabel("Preço").selectOption("1")
+  await expect(
+    form.getByRole("button", { name: "Revisar lote" }),
+  ).toBeDisabled()
+  await form.getByLabel("Preço").selectOption("0")
+  await form.getByRole("button", { name: "Revisar lote" }).click()
+  await expect(page.locator("tbody tr")).toHaveCount(1)
+  await expect(page.locator("tbody")).toContainText("Argila")
+})

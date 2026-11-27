@@ -11,6 +11,7 @@ import {
 } from "#src/catalog.ts"
 import { EditDialog } from "#src/EditDialog.tsx"
 import { demo } from "#src/examples.ts"
+import { MappingDialog } from "#src/MappingDialog.tsx"
 import { Preview, Review } from "#src/Products.tsx"
 
 export function App() {
@@ -21,6 +22,7 @@ export function App() {
   const [reviewing, setReviewing] = useState(true)
   const [onlyIssues, setOnlyIssues] = useState(false)
   const filterInput = useRef<HTMLInputElement>(null)
+  const [source, setSource] = useState<Source | null>(null)
   const [dirty, setDirty] = useState(false)
   const [error, setError] = useState("")
   const request = useRef(0)
@@ -35,6 +37,7 @@ export function App() {
       )
     )
       return
+    setSource(null)
     setDirty(false)
     setCatalog(mapCatalog(next, columns))
     setOnlyIssues(false)
@@ -48,7 +51,7 @@ export function App() {
     try {
       const next = await readFile(file)
       if (id !== request.current) return
-      if (needsMapping(next)) setError("Use os cabeçalhos sku, nome e preco.")
+      if (needsMapping(next)) setSource(next)
       else startReview(next, suggest(next.headers))
     } catch (reason) {
       if (id === request.current)
@@ -145,6 +148,13 @@ export function App() {
         </>
       ) : (
         <Preview items={catalog.items} issues={issues} />
+      )}
+      {source && (
+        <MappingDialog
+          source={source}
+          onApply={(columns) => startReview(source, columns)}
+          onDismiss={() => setSource(null)}
+        />
       )}
       {editing !== null && (
         <EditDialog
