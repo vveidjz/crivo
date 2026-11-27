@@ -23,3 +23,20 @@ test("opens catalogs from the prototype and lets users recover from invalid stor
   await expect(page.getByRole("alert")).toContainText("recuperar")
   await expect(page.locator("tbody tr")).toHaveCount(6)
 })
+
+test("blocks incomplete batches and reopens confirmed data", async ({
+  page,
+}) => {
+  await page.goto("/")
+  const confirm = page.getByRole("button", { name: "Confirmar lote" })
+  await expect(confirm).toBeDisabled()
+  await page
+    .getByLabel("Arquivo CSV")
+    .setInputFiles("tests/fixtures/catalog.csv")
+  await confirm.click()
+  await page.reload()
+  await expect(
+    page.getByRole("heading", { name: "Catálogo confirmado" }),
+  ).toBeVisible()
+  await expect(page.getByRole("article")).toContainText("0007")
+})

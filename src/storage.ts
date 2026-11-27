@@ -9,7 +9,7 @@ import { demo } from "#src/examples.ts"
 
 const required = ["sku", "name", "price"] as const
 
-const catalogKey = "crivo.catalog.v1"
+export const catalogKey = "crivo.catalog.v1"
 function readStoredProduct(item: unknown): unknown {
   if (!item || typeof item !== "object" || "name" in item) return item
   const legacy = item as Record<string, unknown>

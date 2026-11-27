@@ -13,7 +13,7 @@ import { EditDialog } from "#src/EditDialog.tsx"
 import { sampleUrl, supplier } from "#src/examples.ts"
 import { MappingDialog } from "#src/MappingDialog.tsx"
 import { Preview, Review } from "#src/Products.tsx"
-import { restore } from "#src/storage.ts"
+import { catalogKey, restore } from "#src/storage.ts"
 
 export function App() {
   const [initial] = useState(restore)
@@ -22,6 +22,7 @@ export function App() {
   const [editing, setEditing] = useState<number | null>(null)
   const [reviewing, setReviewing] = useState(!initial.saved)
   const [onlyIssues, setOnlyIssues] = useState(false)
+  const previewButton = useRef<HTMLButtonElement>(null)
   const filterInput = useRef<HTMLInputElement>(null)
   const [source, setSource] = useState<Source | null>(() =>
     !initial.saved &&
@@ -81,6 +82,39 @@ export function App() {
     setEditing(null)
     if (rowDisappears) requestAnimationFrame(() => filterInput.current?.focus())
   }
+  function confirmBatch() {
+    if (saved || pending) return
+    request.current++
+    try {
+      const previous = localStorage.getItem(catalogKey)
+      if (
+        previous !== null &&
+        !window.confirm(
+          "Substituir o catálogo salvo neste navegador pelo lote de " +
+            catalog.fileName +
+            "?",
+        )
+      )
+        return
+      if (localStorage.getItem(catalogKey) !== previous) {
+        setError(
+          "O catálogo salvo mudou em outra aba. Confirme novamente para substituir a versão atual.",
+        )
+        return
+      }
+      localStorage.setItem(catalogKey, JSON.stringify(catalog))
+    } catch {
+      setError(
+        "Não foi possível salvar. Mantenha a aba aberta, confira o espaço e as permissões do navegador e tente novamente.",
+      )
+      return
+    }
+    setSaved(true)
+    setDirty(false)
+    setReviewing(false)
+    setError("")
+    requestAnimationFrame(() => previewButton.current?.focus())
+  }
   return (
     <section className="workspace content">
       {error && (
@@ -135,10 +169,11 @@ export function App() {
         </button>
         <button
           type="button"
+          ref={previewButton}
           aria-pressed={!reviewing}
           onClick={() => setReviewing(false)}
         >
-          Prévia do catálogo
+          {saved ? "Catálogo salvo" : "Prévia do catálogo"}
         </button>
       </nav>
       <h2>
@@ -176,6 +211,23 @@ export function App() {
       ) : (
         <Preview items={catalog.items} issues={issues} />
       )}
+      <div className="bottom">
+        <p>
+          {saved
+            ? "Você pode fechar a aba. Seu catálogo estará aqui quando voltar."
+            : pending
+              ? "Corrija as pendências para confirmar o lote."
+              : "Ao confirmar, o catálogo será salvo neste navegador."}
+        </p>
+        <button
+          type="button"
+          className="btn primary"
+          onClick={confirmBatch}
+          disabled={saved || pending > 0}
+        >
+          {saved ? "Lote confirmado" : "Confirmar lote"}
+        </button>
+      </div>
       {source && (
         <MappingDialog
           source={source}
