@@ -10,21 +10,27 @@ import {
   suggest,
 } from "#src/catalog.ts"
 import { EditDialog } from "#src/EditDialog.tsx"
-import { demo, sampleUrl, supplier } from "#src/examples.ts"
+import { sampleUrl, supplier } from "#src/examples.ts"
 import { MappingDialog } from "#src/MappingDialog.tsx"
 import { Preview, Review } from "#src/Products.tsx"
+import { restore } from "#src/storage.ts"
 
 export function App() {
-  const [catalog, setCatalog] = useState(() =>
-    mapCatalog(demo, suggest(demo.headers)),
-  )
+  const [initial] = useState(restore)
+  const [catalog, setCatalog] = useState(initial.catalog)
+  const [saved, setSaved] = useState(initial.saved)
   const [editing, setEditing] = useState<number | null>(null)
-  const [reviewing, setReviewing] = useState(true)
+  const [reviewing, setReviewing] = useState(!initial.saved)
   const [onlyIssues, setOnlyIssues] = useState(false)
   const filterInput = useRef<HTMLInputElement>(null)
-  const [source, setSource] = useState<Source | null>(null)
+  const [source, setSource] = useState<Source | null>(() =>
+    !initial.saved &&
+    new URLSearchParams(location.search).get("exemplo") === "fornecedor"
+      ? supplier
+      : null,
+  )
   const [dirty, setDirty] = useState(false)
-  const [error, setError] = useState("")
+  const [error, setError] = useState(initial.error)
   const request = useRef(0)
   const fileInput = useRef<HTMLInputElement>(null)
   const issues = issuesFor(catalog.items)
@@ -39,6 +45,7 @@ export function App() {
       return
     setSource(null)
     setDirty(false)
+    setSaved(false)
     setCatalog(mapCatalog(next, columns))
     setOnlyIssues(false)
     setReviewing(true)
@@ -134,7 +141,13 @@ export function App() {
           Prévia do catálogo
         </button>
       </nav>
-      <h2>{reviewing ? "Produtos do arquivo" : "Prévia do catálogo"}</h2>
+      <h2>
+        {reviewing
+          ? "Produtos do arquivo"
+          : saved
+            ? "Catálogo confirmado"
+            : "Prévia do catálogo"}
+      </h2>
       <p role="status">
         {catalog.items.length} no lote · {pending} com pendência
       </p>
@@ -153,6 +166,7 @@ export function App() {
             items={catalog.items}
             issues={issues}
             onlyIssues={onlyIssues}
+            saved={saved}
             onEdit={(index) => {
               request.current++
               setEditing(index)
