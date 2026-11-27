@@ -10,7 +10,7 @@ import {
   suggest,
 } from "#src/catalog.ts"
 import { EditDialog } from "#src/EditDialog.tsx"
-import { demo } from "#src/examples.ts"
+import { demo, sampleUrl, supplier } from "#src/examples.ts"
 import { MappingDialog } from "#src/MappingDialog.tsx"
 import { Preview, Review } from "#src/Products.tsx"
 
@@ -84,6 +84,19 @@ export function App() {
       <div className="filebar">
         <b className="filename">{catalog.fileName}</b>
         <div className="actions">
+          <button
+            type="button"
+            className="link"
+            onClick={() => {
+              request.current++
+              setSource(supplier)
+            }}
+          >
+            Testar mapeamento
+          </button>
+          <a className="link" href={sampleUrl} download="tintas-exemplo.csv">
+            Baixar exemplo
+          </a>
           <button
             type="button"
             className="btn"
