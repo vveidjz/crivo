@@ -1,0 +1,153 @@
+:root {
+  color-scheme: light;
+  --ink: #192e39;
+  --soft: #52616a;
+  --line: #d7dcd9;
+  --paper: #faf9f5;
+  --panel: #fffefa;
+  --accent: #284a9b;
+  --warn: #85441a;
+  font:
+    16px / 1.45 "Inter",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+input,
+a {
+  font: inherit;
+}
+button,
+a {
+  touch-action: manipulation;
+}
+button {
+  cursor: pointer;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 3px solid #436ed1;
+  outline-offset: 3px;
+}
+header {
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+.wrap {
+  max-width: 1190px;
+  padding: 0 clamp(16px, 4vw, 56px);
+  margin: auto;
+}
+.bar,
+.brand,
+.row,
+.actions,
+.toolbar,
+.status,
+.product {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.bar {
+  min-height: 68px;
+  justify-content: space-between;
+}
+.brand {
+  font-size: 27px;
+  font-weight: 780;
+  letter-spacing: -1.5px;
+}
+.mark {
+  display: block;
+  width: 25px;
+  height: 25px;
+  transform: skewY(-12deg);
+  background: repeating-linear-gradient(
+    0deg,
+    var(--accent) 0 5px,
+    transparent 5px 8px
+  );
+}
+.soft,
+small {
+  color: var(--soft);
+}
+.bar small {
+  font-size: 13px;
+}
+.hero {
+  margin-top: 32px;
+  background: #e9eee6;
+  border: 1px solid #d3dcd0;
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 34px clamp(20px, 4vw, 44px);
+  min-height: 180px;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+h1 {
+  font-family: "Iowan Old Style", Georgia, serif;
+  font-size: clamp(36px, 5.3vw, 67px);
+  font-weight: 500;
+  letter-spacing: -0.052em;
+  line-height: 1.08;
+}
+.hero p {
+  margin-top: 9px;
+  max-width: 52ch;
+  color: #41544a;
+}
+.deck {
+  position: relative;
+  align-self: stretch;
+  min-width: 190px;
+  margin: 0 18px;
+}
+.chip {
+  position: absolute;
+  bottom: 0;
+  left: 65px;
+  width: 65px;
+  height: 125px;
+  border: 5px solid #fffdf3;
+  border-bottom-width: 23px;
+  border-radius: 4px;
+  box-shadow: 1px 4px 7px #1c342622;
+  transform-origin: 60% 89%;
+}
+.chip:nth-child(1) {
+  background: #b97b64;
+  transform: rotate(-44deg);
+}
+.chip:nth-child(2) {
+  background: #edc779;
+  transform: rotate(-22deg);
+}
+.chip:nth-child(3) {
+  background: #8caa87;
+  transform: rotate(1deg);
+}
+.chip:nth-child(4) {
+  background: #344f86;
+  transform: rotate(23deg);
+}
