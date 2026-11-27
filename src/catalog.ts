@@ -3,10 +3,11 @@ export const fields = ["sku", "name", "price", "category", "color"] as const
 type Field = (typeof fields)[number]
 export type Product = Record<"sku" | "name" | "price", string> &
   Partial<Record<"category" | "color", string>>
-type Catalog = { fileName: string; items: Product[] }
+export type Catalog = { fileName: string; example: boolean; items: Product[] }
 export type Columns = Record<Field, number>
 export type Source = {
   fileName: string
+  example: boolean
   headers: string[]
   rows: string[][]
 }
@@ -31,7 +32,11 @@ const normalize = (value: string) =>
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
 
-export function parseCSV(text: string, fileName: string): Source {
+export function parseCSV(
+  text: string,
+  fileName: string,
+  example = false,
+): Source {
   const firstLine = text
     .trimStart()
     .split(/[\r\n]/, 1)[0]
@@ -65,7 +70,7 @@ export function parseCSV(text: string, fileName: string): Source {
         (invalid + 1) +
         " tem uma quantidade de campos diferente do cabeçalho.",
     )
-  return { headers, rows, fileName }
+  return { headers, rows, fileName, example }
 }
 
 export async function readFile(file: File) {
@@ -132,7 +137,7 @@ export function mapCatalog(source: Source, columns: Columns): Catalog {
     category: row[columns.category],
     color: row[columns.color],
   }))
-  return { fileName: source.fileName, items }
+  return { fileName: source.fileName, example: source.example, items }
 }
 
 export function validPrice(value: string) {

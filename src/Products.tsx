@@ -17,9 +17,11 @@ export function Review({
   items,
   issues,
   onlyIssues,
+  saved,
   onEdit,
 }: Props & {
   onlyIssues: boolean
+  saved: boolean
   onEdit: (index: number) => void
 }) {
   if (onlyIssues && issues.every((list) => !list.length))
@@ -62,19 +64,23 @@ export function Review({
               </td>
 
               <td>
-                <button
-                  type="button"
-                  className="link"
-                  aria-label={
-                    "Editar " +
-                    (item.name || "produto") +
-                    ", registro " +
-                    (index + 1)
-                  }
-                  onClick={() => onEdit(index)}
-                >
-                  Editar
-                </button>
+                {saved ? (
+                  "Conferido"
+                ) : (
+                  <button
+                    type="button"
+                    className="link"
+                    aria-label={
+                      "Editar " +
+                      (item.name || "produto") +
+                      ", registro " +
+                      (index + 1)
+                    }
+                    onClick={() => onEdit(index)}
+                  >
+                    Editar
+                  </button>
+                )}
               </td>
             </tr>
           )

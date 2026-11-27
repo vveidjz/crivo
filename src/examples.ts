@@ -1,7 +1,7 @@
 import { parseCSV } from "#src/catalog.ts"
 import { sampleCSV } from "#src/sample.ts"
 
-export const demo = parseCSV(sampleCSV, "tintas-exemplo.csv")
+export const demo = parseCSV(sampleCSV, "tintas-exemplo.csv", true)
 export const supplier = {
   ...demo,
   fileName: "tintas-fornecedor.csv",
