@@ -6,11 +6,10 @@ import {
   mappingError,
   needsMapping,
   parseCSV,
-  price,
   readFile,
   suggest,
-  validPrice,
 } from "#src/catalog.ts"
+import { price, validPrice } from "#src/price.ts"
 
 test("reads CSV headers and keeps leading zeros in SKU", () => {
   const source = parseCSV("sku,nome,preco\n0007,Papel,12", "papel.csv")
@@ -114,4 +113,9 @@ test("finds three affected products in the demo", () => {
   const catalog = mapCatalog(source, suggest(source.headers))
   equal(catalog.items.length, 6)
   equal(issuesFor(catalog.items).filter((list) => list.length).length, 3)
+})
+
+test("recognizes both supplier SKU aliases", () => {
+  equal(suggest(["Código", "Nome", "Preço"]).sku, 0)
+  equal(suggest(["Referência", "Nome", "Preço"]).sku, 0)
 })

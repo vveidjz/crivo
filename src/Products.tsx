@@ -1,4 +1,5 @@
-import { type Product, price } from "#src/catalog.ts"
+import type { Product } from "#src/catalog.ts"
+import { price } from "#src/price.ts"
 
 type Props = { items: Product[]; issues: string[][] }
 function Swatch({ item, className }: { item: Product; className: string }) {

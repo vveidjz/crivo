@@ -116,14 +116,26 @@ export function App() {
     requestAnimationFrame(() => previewButton.current?.focus())
   }
   return (
-    <section className="workspace content">
+    <section className="workspace" aria-label="Área de importação">
       {error && (
         <p className="notice" role="alert">
           {error}
         </p>
       )}
       <div className="filebar">
-        <b className="filename">{catalog.fileName}</b>
+        <div className="row">
+          <span className="filetag">CSV</span>
+          <div className="fileinfo">
+            <b className="filename">{catalog.fileName}</b>
+            <span className="soft">
+              {saved
+                ? "Catálogo salvo neste navegador"
+                : catalog.example
+                  ? "Lote de exemplo · Dados fictícios"
+                  : "Arquivo local · Em revisão"}
+            </span>
+          </div>
+        </div>
         <div className="actions">
           <button
             type="button"
@@ -176,27 +188,34 @@ export function App() {
           {saved ? "Catálogo salvo" : "Prévia do catálogo"}
         </button>
       </nav>
-      <h2>
-        {reviewing
-          ? "Produtos do arquivo"
-          : saved
-            ? "Catálogo confirmado"
-            : "Prévia do catálogo"}
-      </h2>
-      <p role="status">
-        {catalog.items.length} no lote · {pending} com pendência
-      </p>
-      {reviewing ? (
-        <>
-          <label className="filter">
-            <input
-              ref={filterInput}
-              type="checkbox"
-              checked={onlyIssues}
-              onChange={(event) => setOnlyIssues(event.target.checked)}
-            />
-            Só com pendências
-          </label>
+      <div className="content">
+        <div className="toolbar">
+          <div>
+            <h2>
+              {reviewing
+                ? "Produtos do arquivo"
+                : saved
+                  ? "Catálogo confirmado"
+                  : "Prévia do catálogo"}
+            </h2>
+            <p className="summary" role="status">
+              {catalog.items.length} no lote · {catalog.items.length - pending}{" "}
+              prontos · {pending} com pendência
+            </p>
+          </div>
+          {reviewing && (
+            <label className="filter">
+              <input
+                ref={filterInput}
+                type="checkbox"
+                checked={onlyIssues}
+                onChange={(event) => setOnlyIssues(event.target.checked)}
+              />
+              Só com pendências
+            </label>
+          )}
+        </div>
+        {reviewing ? (
           <Review
             items={catalog.items}
             issues={issues}
@@ -207,26 +226,26 @@ export function App() {
               setEditing(index)
             }}
           />
-        </>
-      ) : (
-        <Preview items={catalog.items} issues={issues} />
-      )}
-      <div className="bottom">
-        <p>
-          {saved
-            ? "Você pode fechar a aba. Seu catálogo estará aqui quando voltar."
-            : pending
-              ? "Corrija as pendências para confirmar o lote."
-              : "Ao confirmar, o catálogo será salvo neste navegador."}
-        </p>
-        <button
-          type="button"
-          className="btn primary"
-          onClick={confirmBatch}
-          disabled={saved || pending > 0}
-        >
-          {saved ? "Lote confirmado" : "Confirmar lote"}
-        </button>
+        ) : (
+          <Preview items={catalog.items} issues={issues} />
+        )}
+        <div className="bottom">
+          <p>
+            {saved
+              ? "Você pode fechar a aba. Seu catálogo estará aqui quando voltar."
+              : pending
+                ? "Corrija as pendências para confirmar o lote."
+                : "Ao confirmar, o catálogo será salvo neste navegador."}
+          </p>
+          <button
+            type="button"
+            className="btn primary"
+            onClick={confirmBatch}
+            disabled={saved || pending > 0}
+          >
+            {saved ? "Lote confirmado" : "Confirmar lote"}
+          </button>
+        </div>
       </div>
       {source && (
         <MappingDialog
