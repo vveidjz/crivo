@@ -6,11 +6,10 @@ import {
   mappingError,
   needsMapping,
   parseCSV,
-  price,
   readFile,
   suggest,
-  validPrice,
 } from "#src/catalog.ts"
+import { price, validPrice } from "#src/price.ts"
 
 test("reads CSV headers and keeps leading zeros in SKU", () => {
   const source = parseCSV("sku,nome,preco\n0007,Papel,12", "papel.csv")

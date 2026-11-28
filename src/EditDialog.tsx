@@ -1,6 +1,7 @@
 import type { FormEvent } from "react"
-import { labels, type Product, validPrice } from "#src/catalog.ts"
+import { labels, type Product } from "#src/catalog.ts"
 import { Dialog } from "#src/Dialog.tsx"
+import { validPrice } from "#src/price.ts"
 
 export function EditDialog({
   item,
