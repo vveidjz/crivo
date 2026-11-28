@@ -21,10 +21,10 @@ export const labels: Record<Field, string> = {
   color: "Cor",
 }
 const required = ["sku", "name", "price"] as const
-const aliases: Partial<Record<Field, string>> = {
-  sku: "referencia",
-  name: "descricao",
-  price: "valor",
+const aliases: Partial<Record<Field, string[]>> = {
+  sku: ["referencia", "codigo"],
+  name: ["descricao"],
+  price: ["valor"],
 }
 const normalize = (value: string) =>
   value
@@ -99,7 +99,9 @@ export function suggest(headers: string[]): Columns {
   for (const field of fields) {
     const exact = names.indexOf(normalize(labels[field]))
     columns[field] =
-      exact >= 0 ? exact : names.findIndex((name) => name === aliases[field])
+      exact >= 0
+        ? exact
+        : names.findIndex((name) => aliases[field]?.includes(name))
   }
   return columns
 }

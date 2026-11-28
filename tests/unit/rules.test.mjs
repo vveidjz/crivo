@@ -114,3 +114,8 @@ test("finds three affected products in the demo", () => {
   equal(catalog.items.length, 6)
   equal(issuesFor(catalog.items).filter((list) => list.length).length, 3)
 })
+
+test("recognizes both supplier SKU aliases", () => {
+  equal(suggest(["Código", "Nome", "Preço"]).sku, 0)
+  equal(suggest(["Referência", "Nome", "Preço"]).sku, 0)
+})
