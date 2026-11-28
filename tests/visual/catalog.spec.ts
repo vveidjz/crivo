@@ -16,3 +16,12 @@ test("review visual", async ({ page }) => {
     page.getByRole("table", { name: "Produtos do arquivo" }),
   ).toHaveScreenshot("review.png", { animations: "disabled" })
 })
+
+test("preview visual", async ({ page }) => {
+  await page.goto("/")
+  await page.getByRole("button", { name: "Prévia do catálogo" }).click()
+  await expect(page.getByRole("article")).toHaveCount(6)
+  await expect(page.locator(".cards")).toHaveScreenshot("preview.png", {
+    animations: "disabled",
+  })
+})
