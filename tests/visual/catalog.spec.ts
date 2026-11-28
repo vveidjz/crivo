@@ -25,3 +25,12 @@ test("preview visual", async ({ page }) => {
     animations: "disabled",
   })
 })
+
+test("mapping visual", async ({ page }) => {
+  await page.goto("/")
+  await page.getByRole("button", { name: "Testar mapeamento" }).click()
+  await expect(page.getByRole("combobox")).toHaveCount(5)
+  await expect(
+    page.getByRole("dialog", { name: "Mapear colunas" }),
+  ).toHaveScreenshot("mapping.png", { animations: "disabled" })
+})
