@@ -123,7 +123,19 @@ export function App() {
         </p>
       )}
       <div className="filebar">
-        <b className="filename">{catalog.fileName}</b>
+        <div className="row">
+          <span className="filetag">CSV</span>
+          <div className="fileinfo">
+            <b className="filename">{catalog.fileName}</b>
+            <span className="soft">
+              {saved
+                ? "Catálogo salvo neste navegador"
+                : catalog.example
+                  ? "Lote de exemplo · Dados fictícios"
+                  : "Arquivo local · Em revisão"}
+            </span>
+          </div>
+        </div>
         <div className="actions">
           <button
             type="button"
