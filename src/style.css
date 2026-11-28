@@ -334,3 +334,50 @@ td {
   font-size: 12px;
   margin-top: 2px;
 }
+
+.bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.bottom p {
+  color: var(--soft);
+  font-size: 14px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  gap: 12px;
+}
+.card {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  overflow: hidden;
+}
+.sample {
+  height: 72px;
+  background: var(--swatch, #eef0ea);
+  border-bottom: 1px solid var(--line);
+}
+.card div:last-child {
+  padding: 12px;
+}
+.card h3 {
+  font-size: 17px;
+  margin: 5px 0;
+}
+.gridprice {
+  font-size: 14px;
+  padding-top: 6px;
+}
+.notice {
+  margin: 12px 0;
+  color: var(--warn);
+  font-size: 14px;
+}
+.notice:empty {
+  display: none;
+}
